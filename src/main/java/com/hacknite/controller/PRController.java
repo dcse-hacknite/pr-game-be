@@ -46,6 +46,8 @@ public class PRController {
     //Endpoint for accepting github's webhook requests
     @PostMapping("/git-event")
     public @ResponseBody StateResponse gitEvent(@RequestBody GitEventRequest request) {
+        System.out.println("----------------------------REQUEST----------------------------");
+        System.out.println(request.toString());
         StateResponse response = service.handleGitRequest(request);
 
         template.convertAndSend("/pr/events", response);
