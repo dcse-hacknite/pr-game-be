@@ -49,7 +49,7 @@ public class StateService {
 
         List<RocketResponse> rockets = new ArrayList<>();
         stateInfo.getRockets()
-                .forEach(it -> rockets.add(new RocketResponse(it.getId(), it.getAuthorAvatars(), it.getSecondsRemaining(), new PositionResponse(it.getPosition()
+                .forEach(it -> rockets.add(new RocketResponse(it.getId(), it.getBranchName(), it.getAuthorAvatars(), it.getSecondsRemaining(), new PositionResponse(it.getPosition()
                         .getDistance(), it.getPosition().getOrder()), it.getStatus())));
         return new StateResponse(planets, rockets);
     }
@@ -60,7 +60,7 @@ public class StateService {
         if (stateInfoIter.hasNext()) {
             stateInfo = stateInfoIter.next();
             RocketInfo currentRocket = stateInfo.getRockets().stream()
-                    .filter(rocketInfo -> rocketInfo.getId().equals(request.getDetails().getId()) || (request.getDetails()
+                    .filter(rocketInfo -> (rocketInfo.getId() != null && rocketInfo.getId().equals(request.getDetails().getId())) || (request.getDetails()
                             .getBranchName() != null && request.getDetails().getBranchName().equals(rocketInfo.getBranchName()))).findFirst().orElse(null);
             RocketInfo rocketNewPosition = null;
             if (currentRocket != null) {

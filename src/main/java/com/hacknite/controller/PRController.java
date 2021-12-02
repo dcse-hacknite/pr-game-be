@@ -39,7 +39,9 @@ public class PRController {
     StateResponse state() {
         System.out.println("Calling state");
         StateResponse response = service.getCurrentState();
-        template.convertAndSend("/pr/events", response);
+        if(response != null) {
+            template.convertAndSend("/pr/events", response);
+        }
         return response;
     }
 
