@@ -37,6 +37,7 @@ public class PRController {
     @GetMapping("/state")
     public @ResponseBody
     StateResponse state() {
+//        service.deleteAll();
         System.out.println("Calling state");
         StateResponse response = service.getCurrentState();
         if(response != null) {
