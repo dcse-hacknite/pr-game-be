@@ -27,8 +27,8 @@ jobs:
         username:  ${{ secrets.SSH_USERNAME }}
         host: ${{ secrets.SSH_HOST }}
         key: ${{ secrets.SSH_KEY }}
-        source: '.'
-        target: './build/libs/'
+        source: './build/libs/'
+        target: '.'
     - name: Executing remote ssh commands using password
       uses: appleboy/ssh-action@master
       with:
