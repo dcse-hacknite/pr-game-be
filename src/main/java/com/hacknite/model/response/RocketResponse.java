@@ -6,7 +6,7 @@ import java.util.List;
 
 @Value
 public class RocketResponse {
-    Long id;
+    String id;
     List<String> authorAvatars;
     Integer secondsRemaining;
     PositionResponse position;

@@ -10,7 +10,7 @@ import java.util.List;
 
 @DynamoDBDocument
 public class RocketInfo {
-    Long id;
+    String id;
     List<String> authorAvatars;
     Integer secondsRemaining;
     PositionInfo position;
@@ -18,7 +18,7 @@ public class RocketInfo {
 
     public RocketInfo(){}
 
-    public RocketInfo(Long id, List<String> authorAvatars, Integer secondsRemaining, PositionInfo position, StatusType status) {
+    public RocketInfo(String id, List<String> authorAvatars, Integer secondsRemaining, PositionInfo position, StatusType status) {
         this.id = id;
         this.authorAvatars = authorAvatars;
         this.secondsRemaining = secondsRemaining;
@@ -26,7 +26,7 @@ public class RocketInfo {
         this.status = status;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -48,7 +48,7 @@ public class RocketInfo {
         return status;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
