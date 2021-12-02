@@ -2,10 +2,6 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ main ]
-env:
-  AWS_DYNAMODB_ENDPOINT: ${{ secrets.AWS_DYNAMODB_ENDPOINT}}
-  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY}}
-  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY}}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,6 +16,10 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
+      env:
+        AWS_DYNAMODB_ENDPOINT: ${{ secrets.AWS_DYNAMODB_ENDPOINT}}
+        AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY}}
+        AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY}}
       run: ./gradlew build
     - name: Inspect artifact
       run: ls -R
@@ -30,4 +30,13 @@ jobs:
         host: ${{ secrets.SSH_HOST }}
         key: ${{ secrets.SSH_KEY }}
         source: '.'
-        target: 'readme.md'
+        target: './build/libs/pr-game-be-0.0.1-SNAPSHOT.jar'
+    - name: Executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        username:  ${{ secrets.SSH_USERNAME }}
+        host: ${{ secrets.SSH_HOST }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          java -jar ./build/libs/pr-game-be-0.0.1-SNAPSHOT.jar stop
+          java -jar ./build/libs/pr-game-be-0.0.1-SNAPSHOT.jar
