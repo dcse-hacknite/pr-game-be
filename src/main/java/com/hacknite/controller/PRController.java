@@ -38,7 +38,9 @@ public class PRController {
     public @ResponseBody
     StateResponse state() {
         System.out.println("Calling state");
-        return service.getCurrentState();
+        StateResponse response = service.getCurrentState();
+        template.convertAndSend("/pr/events", response);
+        return response;
     }
 
     //Endpoint for accepting github's webhook requests
