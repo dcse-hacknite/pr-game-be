@@ -39,6 +39,7 @@ public class PRController {
     @GetMapping("/state")
     public @ResponseBody
     StateResponse state() {
+        System.out.println("Calling state");
         return service.getCurrentState();
     }
 
@@ -48,7 +49,7 @@ public class PRController {
         StateResponse response = service.handleGitRequest(request);
 
         template.convertAndSend("/pr/events", response);
-        return null;
+        return response;
     }
 }
 
