@@ -66,12 +66,12 @@ public class StateService {
             }
             RocketInfo rocketNewPosition = null;
             if (currentRocket != null) {
-                rocketNewPosition = resolveNewRocketPosition(currentRocket, request.getAction(), request.getDetails().getOutcome());
+                rocketNewPosition = resolveNewRocketPosition(currentRocket, request, request.getDetails().getOutcome());
             } else {
                 List<String> authorsAvatars = request.getDetails().getAuthors().stream().map(it -> it.getAvatarUrl()).collect(Collectors.toList());
                 currentRocket = new RocketInfo(request.getDetails().getId(), request.getDetails()
-                        .getBranchName(), authorsAvatars, DEFAULT_SECONDS_REMAINING, new PositionInfo(0D, 0D), StatusType.AWAITING_LAUNCH);
-                rocketNewPosition = resolveNewRocketPosition(currentRocket, request.getAction(), request.getDetails().getOutcome());
+                        .getName(), authorsAvatars, DEFAULT_SECONDS_REMAINING, new PositionInfo(0D, 0D), StatusType.AWAITING_LAUNCH);
+                rocketNewPosition = resolveNewRocketPosition(currentRocket, request, request.getDetails().getOutcome());
             }
             //Replace rocket
             String currentRocketId = currentRocket.getId();
@@ -94,9 +94,9 @@ public class StateService {
         return info;
     }
 
-    private RocketInfo resolveNewRocketPosition(RocketInfo currentRocket, ActionType action, ReviewOutcomeType outcome) {
+    private RocketInfo resolveNewRocketPosition(RocketInfo currentRocket, GitEventRequest request, ReviewOutcomeType outcome) {
         PositionInfo newPosition;
-        switch (action) {
+        switch (request.getAction()) {
             case BRANCH_CREATED:
 //                RocketResponse rocket = new RocketResponse("id", null, null, new PositionResponse(0d, 0d), StatusType.AWAITING_LAUNCH );
                 break;
@@ -106,8 +106,9 @@ public class StateService {
             case BRANCH_DELETED:
                 return null;
             case PULL_REQUEST_CREATED:
+                String prId = request.getDetails().getId();
                 newPosition = new PositionInfo(randomBetween(0d, 0.1d), randomBetween(0d, 0.1d));
-                return new RocketInfo(currentRocket.getId(), currentRocket.getBranchName(), currentRocket.getAuthorAvatars(),
+                return new RocketInfo(prId, currentRocket.getBranchName(), currentRocket.getAuthorAvatars(),
                         currentRocket.getSecondsRemaining(), newPosition, StatusType.FLYING);
             case PULL_REQUEST_REVIEWED:
                 switch (outcome) {
