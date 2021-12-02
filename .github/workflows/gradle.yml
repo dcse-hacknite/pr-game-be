@@ -2,6 +2,10 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ main ]
+env:
+  AWS_DYNAMODB_ENDPOINT: ${{ secrets.AWS_DYNAMODB_ENDPOINT}}
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY}}
+  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY}}
 jobs:
   build:
     runs-on: ubuntu-latest
