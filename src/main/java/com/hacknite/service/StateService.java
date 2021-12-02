@@ -31,12 +31,12 @@ public class StateService {
     private static Integer DEFAULT_SECONDS_REMAINING = 1000;
 
     public StateResponse handleGitRequest(GitEventRequest request) {
-        List<AuthorRequest> authors = Arrays.asList(new AuthorRequest("Author1Name", "Author1Avatar"),
-                new AuthorRequest("Author2Name", "Author2Avatar"));
-        AuthorRequest reviewer = new AuthorRequest("PRAuthor", "AuthorAvatar");
-        GitEventDetailsRequest details = new GitEventDetailsRequest("PR-1", "Pull Request name", new Date(), new Date(),
-                new Date(), authors, "BranchName", reviewer, ReviewOutcomeType.COMMENT);
-        request = new GitEventRequest(ActionType.PULL_REQUEST_CREATED, details);
+//        List<AuthorRequest> authors = Arrays.asList(new AuthorRequest("Author1Name", "Author1Avatar"),
+//                new AuthorRequest("Author2Name", "Author2Avatar"));
+//        AuthorRequest reviewer = new AuthorRequest("PRAuthor", "AuthorAvatar");
+//        GitEventDetailsRequest details = new GitEventDetailsRequest("PR-1", "Pull Request name", new Date(), new Date(),
+//                new Date(), authors, "BranchName", reviewer, ReviewOutcomeType.COMMENT);
+//        request = new GitEventRequest(ActionType.PULL_REQUEST_CREATED, details);
 
 
         createDBIfNotExists();

@@ -10,10 +10,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +28,7 @@ public class PRController {
     @MessageMapping("/connect")
     // Sends the return value of this method to /pr/events
     @SendTo("/pr/events")
+    @CrossOrigin(origins = "*")
     public StateResponse getEvents(StateResponse dto) {
         return dto;
     }
