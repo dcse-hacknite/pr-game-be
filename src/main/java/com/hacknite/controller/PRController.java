@@ -26,22 +26,12 @@ public class PRController {
     @Autowired
     private StateService service;
 
-    List<RocketResponse> rockets = Arrays.asList(
-            new RocketResponse(1L, Arrays.asList("avatar-url"), 100,
-                    new PositionResponse(Math.random(), Math.random()), StatusType.FLYING),
-            new RocketResponse(2L, Arrays.asList("avatar-url2"), 120,
-                    new PositionResponse(Math.random(), Math.random()), StatusType.PROBLEM),
-            new RocketResponse(3L, Arrays.asList("avatar-url3"), 150,
-                    new PositionResponse(Math.random(), Math.random()), StatusType.FLYING),
-            new RocketResponse(4L, Arrays.asList("avatar-url4"), 80,
-                    new PositionResponse(Math.random(), Math.random()), StatusType.MUTINY));
-
     //Websocket for subscribing to events
     // Takes messages from /app/connect. (Note the Spring adds the /app prefix for us).
     @MessageMapping("/connect")
     // Sends the return value of this method to /pr/events
     @SendTo("/pr/events")
-    public EventDto getEvents(EventDto dto) {
+    public StateResponse getEvents(StateResponse dto) {
         return dto;
     }
 
@@ -49,39 +39,16 @@ public class PRController {
     @GetMapping("/state")
     public @ResponseBody
     StateResponse state() {
-        EventDto event = new EventDto();
-        event.setEvent("Event happened");
-        template.convertAndSend("/pr/events", event);
-
-        return new StateResponse(Arrays.asList(new PlanetResponse("Mars", 100L)), rockets);
+        return service.getCurrentState();
     }
 
     //Endpoint for accepting github's webhook requests
     @PostMapping("/git-event")
     public @ResponseBody StateResponse gitEvent(@RequestBody GitEventRequest request) {
+        StateResponse response = service.handleGitRequest(request);
 
-        service.fetchAll();
-//        service.saveState();
-
-        switch (request.getAction()) {
-            case BRANCH_UPDATED:
-//                if(branch does not exist) {
-//
-//                }
-                break;
-            case BRANCH_DELETED:
-                break;
-            case PULL_REQUEST_CREATED:
-                break;
-            case PULL_REQUEST_REVIEWED:
-                break;
-            case PULL_REQUEST_MERGED:
-                break;
-            case PULL_REQUEST_DELETED:
-                break;
-        }
-//        template.convertAndSend("/pr/events", event);
-        return new StateResponse(Arrays.asList(new PlanetResponse("Mars", 100L)), rockets);
+        template.convertAndSend("/pr/events", response);
+        return null;
     }
 }
 
