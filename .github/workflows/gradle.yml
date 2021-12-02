@@ -38,4 +38,4 @@ jobs:
         script: |
           echo $AWS_DYNAMODB_ENDPOINT
           killall java
-          java -jar ./build/libs/pr-game-be-0.0.1-SNAPSHOT.jar
+          nohup java -jar ./build/libs/pr-game-be-0.0.1-SNAPSHOT.jar &
