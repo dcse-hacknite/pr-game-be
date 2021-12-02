@@ -11,6 +11,7 @@ import java.util.List;
 @DynamoDBDocument
 public class RocketInfo {
     String id;
+    String branchName;
     List<String> authorAvatars;
     Integer secondsRemaining;
     PositionInfo position;
@@ -18,8 +19,9 @@ public class RocketInfo {
 
     public RocketInfo(){}
 
-    public RocketInfo(String id, List<String> authorAvatars, Integer secondsRemaining, PositionInfo position, StatusType status) {
+    public RocketInfo(String id, String branchName, List<String> authorAvatars, Integer secondsRemaining, PositionInfo position, StatusType status) {
         this.id = id;
+        this.branchName = branchName;
         this.authorAvatars = authorAvatars;
         this.secondsRemaining = secondsRemaining;
         this.position = position;
@@ -28,6 +30,10 @@ public class RocketInfo {
 
     public String getId() {
         return id;
+    }
+
+    public String getBranchName() {
+        return branchName;
     }
 
     public List<String> getAuthorAvatars() {
@@ -50,6 +56,10 @@ public class RocketInfo {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
     }
 
     public void setAuthorAvatars(List<String> authorAvatars) {
