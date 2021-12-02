@@ -8,9 +8,7 @@ import com.hacknite.model.db.PlanetInfo;
 import com.hacknite.model.db.PositionInfo;
 import com.hacknite.model.db.RocketInfo;
 import com.hacknite.model.db.StateInfo;
-import com.hacknite.model.request.ActionType;
-import com.hacknite.model.request.GitEventRequest;
-import com.hacknite.model.request.ReviewOutcomeType;
+import com.hacknite.model.request.*;
 import com.hacknite.model.response.*;
 import com.hacknite.repository.StateInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +31,7 @@ public class StateService {
     private static Integer DEFAULT_SECONDS_REMAINING = 1000;
 
     public StateResponse handleGitRequest(GitEventRequest request) {
-        createDBIfNotExists();
+//        createDBIfNotExists();
         StateInfo stateInfo = determineAndStoreNewState(request);
         return createResponseFromStateInfo(stateInfo);
     }

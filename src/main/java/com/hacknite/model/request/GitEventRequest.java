@@ -6,5 +6,4 @@ import lombok.Value;
 public class GitEventRequest {
     ActionType action;
     GitEventDetailsRequest details;
-
 }
