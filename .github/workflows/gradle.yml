@@ -35,7 +35,4 @@ jobs:
         username:  ${{ secrets.SSH_USERNAME }}
         host: ${{ secrets.SSH_HOST }}
         key: ${{ secrets.SSH_KEY }}
-        script: |
-          echo $AWS_DYNAMODB_ENDPOINT
-          killall java
-          nohup java -jar ./build/libs/pr-game-be-0.0.1-SNAPSHOT.jar &
+        script: nohup java -jar ./build/libs/pr-game-be-0.0.1-SNAPSHOT.jar > logs.txt 2>&1 &
