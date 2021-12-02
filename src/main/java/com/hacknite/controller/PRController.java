@@ -2,6 +2,7 @@ package com.hacknite.controller;
 
 import com.hacknite.dto.EventDto;
 import com.hacknite.dto.MessageDto;
+import com.hacknite.model.request.GitEventRequest;
 import com.hacknite.model.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -10,6 +11,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Arrays;
@@ -36,13 +38,13 @@ public class PRController {
     StateResponse state() {
         List<RocketResponse> rockets = Arrays.asList(
                 new RocketResponse(1L, Arrays.asList("avatar-url"), 100,
-                    new PositionResponse(0.456, 0.891), StatusType.FLYING),
+                    new PositionResponse(Math.random(), Math.random()), StatusType.FLYING),
                 new RocketResponse(2L, Arrays.asList("avatar-url2"), 120,
-                    new PositionResponse(0.356, 0.128), StatusType.PROBLEM),
+                    new PositionResponse(Math.random(), Math.random()), StatusType.PROBLEM),
                 new RocketResponse(3L, Arrays.asList("avatar-url3"), 150,
-                        new PositionResponse(0.653, 0.782), StatusType.FLYING),
+                        new PositionResponse(Math.random(), Math.random()), StatusType.FLYING),
                 new RocketResponse(4L, Arrays.asList("avatar-url4"), 80,
-                        new PositionResponse(0.761, 0.498), StatusType.MUTINY));
+                        new PositionResponse(Math.random(), Math.random()), StatusType.MUTINY));
 
         EventDto event = new EventDto();
         event.setEvent("Event happened");
@@ -52,12 +54,20 @@ public class PRController {
     }
 
     //Endpoint for accepting github's webhook requests
-    @PostMapping("/pullRequest")
-    public void pullRequest() {
-        //Accept data, store it
-//        EventDto event = new EventDto("Test");
-        //Send result event to subscribers
+    @PostMapping("/git-event")
+    public @ResponseBody StateResponse gitEvent(@RequestBody GitEventRequest request) {
+
+        List<RocketResponse> rockets = Arrays.asList(
+                new RocketResponse(1L, Arrays.asList("avatar-url"), 100,
+                        new PositionResponse(Math.random(), Math.random()), StatusType.FLYING),
+                new RocketResponse(2L, Arrays.asList("avatar-url2"), 120,
+                        new PositionResponse(Math.random(), Math.random()), StatusType.PROBLEM),
+                new RocketResponse(3L, Arrays.asList("avatar-url3"), 150,
+                        new PositionResponse(Math.random(), Math.random()), StatusType.FLYING),
+                new RocketResponse(4L, Arrays.asList("avatar-url4"), 80,
+                        new PositionResponse(Math.random(), Math.random()), StatusType.MUTINY));
 //        template.convertAndSend("/pr/events", event);
+        return new StateResponse(Arrays.asList(new PlanetResponse("Mars", 100L)), rockets);
     }
 }
 
