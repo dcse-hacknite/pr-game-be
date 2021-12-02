@@ -28,7 +28,7 @@ jobs:
         host: ${{ secrets.SSH_HOST }}
         key: ${{ secrets.SSH_KEY }}
         source: '.'
-        target: './build/libs/pr-game-be-0.0.1-SNAPSHOT.jar'
+        target: './build/libs/'
     - name: Executing remote ssh commands using password
       uses: appleboy/ssh-action@master
       with:
