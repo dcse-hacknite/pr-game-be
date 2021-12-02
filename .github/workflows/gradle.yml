@@ -38,5 +38,5 @@ jobs:
         host: ${{ secrets.SSH_HOST }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          java -jar build/libs/pr-game-be-0.0.1-SNAPSHOT.jar stop
+          echo ls -R
           java -jar build/libs/pr-game-be-0.0.1-SNAPSHOT.jar
