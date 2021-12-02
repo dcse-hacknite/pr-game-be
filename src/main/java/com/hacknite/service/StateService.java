@@ -59,9 +59,11 @@ public class StateService {
         StateInfo stateInfo;
         if (stateInfoIter.hasNext()) {
             stateInfo = stateInfoIter.next();
-            RocketInfo currentRocket = stateInfo.getRockets().stream()
-                    .filter(rocketInfo -> (rocketInfo.getId() != null && rocketInfo.getId().equals(request.getDetails().getId())) || (request.getDetails()
-                            .getBranchName() != null && request.getDetails().getBranchName().equals(rocketInfo.getBranchName()))).findFirst().orElse(null);
+            RocketInfo currentRocket = null;
+            if(stateInfo.getRockets() != null) {
+                currentRocket = stateInfo.getRockets().stream()
+                        .filter(rocketInfo -> (rocketInfo.getId() != null && rocketInfo.getId().equals(request.getDetails().getId())) || (request.getDetails().getBranchName() != null && request.getDetails().getBranchName().equals(rocketInfo.getBranchName()))).findFirst().orElse(null);
+            }
             RocketInfo rocketNewPosition = null;
             if (currentRocket != null) {
                 rocketNewPosition = resolveNewRocketPosition(currentRocket, request.getAction(), request.getDetails().getOutcome());
