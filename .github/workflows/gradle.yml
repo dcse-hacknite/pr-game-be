@@ -27,5 +27,5 @@ jobs:
         username:  ${{ secrets.SSH_USERNAME }}
         host: ${{ secrets.SSH_HOST }}
         key: ${{ secrets.SSH_KEY }}
-        source: "tests/readme.md"
-        target: "readme.md"
+        source: '.'
+        target: 'readme.md'
