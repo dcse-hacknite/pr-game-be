@@ -88,13 +88,7 @@ public class StateService {
 
     private StateInfo createStateInfoFromRequest(GitEventRequest request) {
         List<PlanetInfo> planets = Arrays.asList(new PlanetInfo("Mars", 100L));
-        List<String> authorsAvatars = request.getDetails().getAuthors().stream().map(it -> it.getAvatarUrl()).collect(Collectors.toList());
-        RocketInfo rocket = new RocketInfo(request.getDetails().getId(), request.getDetails()
-                .getBranchName(), authorsAvatars, DEFAULT_SECONDS_REMAINING, new PositionInfo(0D, 0D), StatusType.AWAITING_LAUNCH);
-
-        RocketInfo updatedPositionRocket = resolveNewRocketPosition(rocket, request.getAction(), request.getDetails().getOutcome());
-        List<RocketInfo> rockets = Arrays.asList(updatedPositionRocket);
-        StateInfo info = new StateInfo(planets, rockets);
+        StateInfo info = new StateInfo(planets, Collections.EMPTY_LIST);
         return info;
     }
 
