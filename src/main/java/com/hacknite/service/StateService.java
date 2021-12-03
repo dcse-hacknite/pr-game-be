@@ -98,7 +98,10 @@ public class StateService {
     }
 
     private RocketInfo createStartupRocket(GitEventRequest request) {
-        List<String> authorAvatars = request.getDetails().getAuthors().stream().map(it -> it.getAvatarUrl()).collect(Collectors.toList());
+        List<String> authorAvatars = Collections.EMPTY_LIST;
+        if(request.getDetails().getAuthors() != null) {
+            authorAvatars = request.getDetails().getAuthors().stream().map(it -> it.getAvatarUrl()).collect(Collectors.toList());
+        }
         Double ordeInYAxis = new Random().nextDouble();
         RocketInfo rocket = new RocketInfo(request.getDetails().getId(), request.getDetails()
                 .getBranchName(), authorAvatars, 1000, new PositionInfo(0D, ordeInYAxis), StatusType.AWAITING_LAUNCH);
