@@ -67,9 +67,7 @@ public class StateService {
             if (currentRocket != null) {
                 rocketNewPosition = resolveNewRocketPosition(currentRocket, request);
             } else {
-                List<String> authorsAvatars = request.getDetails().getAuthors().stream().map(it -> it.getAvatarUrl()).collect(Collectors.toList());
-                currentRocket = new RocketInfo(request.getDetails().getId(), request.getDetails()
-                        .getBranchName(), authorsAvatars, DEFAULT_SECONDS_REMAINING, new PositionInfo(0D, 0D), StatusType.AWAITING_LAUNCH);
+                currentRocket = createStartupRocket(request);
                 rocketNewPosition = resolveNewRocketPosition(currentRocket, request);
             }
             //Replace rocket
@@ -89,13 +87,19 @@ public class StateService {
 
     private StateInfo createStateInfoFromRequest(GitEventRequest request) {
         List<PlanetInfo> planets = Arrays.asList(new PlanetInfo("Mars", 100L));
-        List<String> authorAvatars = request.getDetails().getAuthors().stream().map(it -> it.getAvatarUrl()).collect(Collectors.toList());
-        RocketInfo rocket = new RocketInfo(request.getDetails().getId(), request.getDetails()
-                .getBranchName(), authorAvatars, 1000, new PositionInfo(0D, 0D), StatusType.AWAITING_LAUNCH);
+        RocketInfo rocket = createStartupRocket(request);
         RocketInfo updatedPositionAndStatus = resolveNewRocketPosition(rocket, request);
         List<RocketInfo> rockets = Arrays.asList(updatedPositionAndStatus);
         StateInfo info = new StateInfo(planets, rockets);
         return info;
+    }
+
+    private RocketInfo createStartupRocket(GitEventRequest request) {
+        List<String> authorAvatars = request.getDetails().getAuthors().stream().map(it -> it.getAvatarUrl()).collect(Collectors.toList());
+        Double ordeInYAxis = new Random().nextDouble();
+        RocketInfo rocket = new RocketInfo(request.getDetails().getId(), request.getDetails()
+                .getBranchName(), authorAvatars, 1000, new PositionInfo(0D, ordeInYAxis), StatusType.AWAITING_LAUNCH);
+        return rocket;
     }
 
     private RocketInfo resolveNewRocketPosition(RocketInfo currentRocket, GitEventRequest request) {
@@ -106,15 +110,14 @@ public class StateService {
                 break;
             case PULL_REQUEST_CREATED:
             case PULL_REQUEST_UPDATED:
-                newPosition = new PositionInfo(randomBetween(0d, 0.1d), randomBetween(0d, 0.1d));
+                newPosition = new PositionInfo(randomBetween(0d, 0.1d), currentRocket.getPosition().getOrder());
                 return new RocketInfo(currentRocket.getId(), currentRocket.getBranchName(), currentRocket.getAuthorAvatars(),
                         currentRocket.getSecondsRemaining(), newPosition, StatusType.FLYING);
             case PULL_REQUEST_REVIEWED:
                 switch (request.getDetails().getOutcome()) {
                     case APPROVE:
                         PositionInfo oldPosition = currentRocket.getPosition();
-                        newPosition = new PositionInfo(oldPosition.getDistance() + randomBetween(0.3d, 0.4d), oldPosition.getOrder() + randomBetween(0.3d,
-                                0.4d));
+                        newPosition = new PositionInfo(oldPosition.getDistance() + randomBetween(0.3d, 0.4d), currentRocket.getPosition().getOrder());
                         return new RocketInfo(currentRocket.getId(), currentRocket.getBranchName(), currentRocket.getAuthorAvatars(),
                                 currentRocket.getSecondsRemaining(), newPosition, StatusType.FLYING);
                     case COMMENT:
@@ -125,11 +128,11 @@ public class StateService {
                                 currentRocket.getSecondsRemaining(), currentRocket.getPosition(), StatusType.MUTINY);
                 }
             case PULL_REQUEST_MERGED:
-                newPosition = new PositionInfo(randomBetween(1d, 1d), randomBetween(1d, 1d));
+                newPosition = new PositionInfo(randomBetween(1d, 1d), currentRocket.getPosition().getOrder());
                 return new RocketInfo(currentRocket.getId(), currentRocket.getBranchName(), currentRocket.getAuthorAvatars(),
                         currentRocket.getSecondsRemaining(), newPosition, StatusType.LANDED);
             case PULL_REQUEST_DELETED:
-                newPosition = new PositionInfo(randomBetween(0d, 0d), randomBetween(0d, 0d));
+                newPosition = new PositionInfo(randomBetween(0d, 0d), currentRocket.getPosition().getOrder());
                 return new RocketInfo(currentRocket.getId(), currentRocket.getBranchName(), currentRocket.getAuthorAvatars(),
                         currentRocket.getSecondsRemaining(), newPosition, StatusType.AWAITING_LAUNCH);
         }
@@ -150,7 +153,7 @@ public class StateService {
         }
     }
 
-    private Double randomBetween(double min, double max) {
+    public Double randomBetween(double min, double max) {
         Random r = new Random();
         return (r.nextInt((int) ((max - min) * 10 + 1)) + min * 10) / 10.0;
     }

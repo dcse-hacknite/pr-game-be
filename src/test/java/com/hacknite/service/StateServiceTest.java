@@ -47,13 +47,18 @@ public class StateServiceTest {
 
 
         List<PlanetInfo> planets = Arrays.asList(new PlanetInfo("Mars", 100L));
-        RocketInfo rocket1 = new RocketInfo("Rocket1", Arrays.asList("AuthorAvatar1", "AuthorAvatar1-2"), 1000, new PositionInfo(0D, 0D), StatusType.AWAITING_LAUNCH);
-        RocketInfo rocket2 = new RocketInfo("Rocket2", Arrays.asList("AuthorAvatar2", "AuthorAvatar2-2"), 1000, new PositionInfo(0D, 0D), StatusType.FLYING);
+        RocketInfo rocket1 = new RocketInfo("Rocket1", "branchName", Arrays.asList("AuthorAvatar1", "AuthorAvatar1-2"), 1000, new PositionInfo(0D, 0D), StatusType.AWAITING_LAUNCH);
+        RocketInfo rocket2 = new RocketInfo("Rocket2", "BranchName", Arrays.asList("AuthorAvatar2", "AuthorAvatar2-2"), 1000, new PositionInfo(0D, 0D), StatusType.FLYING);
         List<RocketInfo> rockets = Arrays.asList(rocket1, rocket2);
         StateInfo stateInfo = new StateInfo(planets, rockets);
         when(stateInfoIter.next()).thenReturn(stateInfo);
 
         service.determineAndStoreNewState(null);
 
+    }
+
+    @Test
+    public void testRandom() {
+        Double random = service.randomBetween(0.112D, 0.583D);
     }
 }
