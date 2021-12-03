@@ -49,7 +49,8 @@ public class StateService {
 
         List<RocketResponse> rockets = new ArrayList<>();
         stateInfo.getRockets()
-                .forEach(it -> rockets.add(new RocketResponse(it.getId(), it.getBranchName(), it.getAuthorAvatars(), it.getSecondsRemaining(), new PositionResponse(it.getPosition()
+                .forEach(it -> rockets.add(new RocketResponse(it.getId(), it.getBranchName(), it.getAuthorAvatars(), it.getSecondsRemaining(),
+                        new PositionResponse(it.getPosition()
                         .getDistance(), it.getPosition().getOrder()), it.getStatus())));
         return new StateResponse(planets, rockets);
     }
@@ -59,22 +60,17 @@ public class StateService {
         StateInfo stateInfo;
         if (stateInfoIter.hasNext()) {
             stateInfo = stateInfoIter.next();
-            RocketInfo currentRocket = null;
-            if(stateInfo.getRockets() != null && !stateInfo.getRockets().isEmpty()) {
-                currentRocket = stateInfo.getRockets().stream()
-                        .filter(rocketInfo -> (rocketInfo.getId() != null && rocketInfo.getId().equals(request.getDetails().getId())) || (request.getDetails().getBranchName() != null && request.getDetails().getBranchName().equals(rocketInfo.getBranchName()))).findFirst().orElse(null);
-                if(currentRocket != null && currentRocket.getId() == null) {
-                    currentRocket.setId(request.getDetails().getId());
-                }
-            }
+            RocketInfo currentRocket = stateInfo.getRockets().stream()
+                    .filter(rocketInfo -> (rocketInfo.getId() != null && rocketInfo.getId().equals(request.getDetails().getId()))).findFirst().orElse(null);
+
             RocketInfo rocketNewPosition = null;
             if (currentRocket != null) {
-                rocketNewPosition = resolveNewRocketPosition(currentRocket, request, request.getDetails().getOutcome());
+                rocketNewPosition = resolveNewRocketPosition(currentRocket, request);
             } else {
                 List<String> authorsAvatars = request.getDetails().getAuthors().stream().map(it -> it.getAvatarUrl()).collect(Collectors.toList());
                 currentRocket = new RocketInfo(request.getDetails().getId(), request.getDetails()
-                        .getName(), authorsAvatars, DEFAULT_SECONDS_REMAINING, new PositionInfo(0D, 0D), StatusType.AWAITING_LAUNCH);
-                rocketNewPosition = resolveNewRocketPosition(currentRocket, request, request.getDetails().getOutcome());
+                        .getBranchName(), authorsAvatars, DEFAULT_SECONDS_REMAINING, new PositionInfo(0D, 0D), StatusType.AWAITING_LAUNCH);
+                rocketNewPosition = resolveNewRocketPosition(currentRocket, request);
             }
             //Replace rocket
             String currentRocketId = currentRocket.getId();
@@ -93,28 +89,28 @@ public class StateService {
 
     private StateInfo createStateInfoFromRequest(GitEventRequest request) {
         List<PlanetInfo> planets = Arrays.asList(new PlanetInfo("Mars", 100L));
-        StateInfo info = new StateInfo(planets, Collections.EMPTY_LIST);
+        List<String> authorAvatars = request.getDetails().getAuthors().stream().map(it -> it.getAvatarUrl()).collect(Collectors.toList());
+        RocketInfo rocket = new RocketInfo(request.getDetails().getId(), request.getDetails()
+                .getBranchName(), authorAvatars, 1000, new PositionInfo(0D, 0D), StatusType.AWAITING_LAUNCH);
+        RocketInfo updatedPositionAndStatus = resolveNewRocketPosition(rocket, request);
+        List<RocketInfo> rockets = Arrays.asList(updatedPositionAndStatus);
+        StateInfo info = new StateInfo(planets, rockets);
         return info;
     }
 
-    private RocketInfo resolveNewRocketPosition(RocketInfo currentRocket, GitEventRequest request, ReviewOutcomeType outcome) {
+    private RocketInfo resolveNewRocketPosition(RocketInfo currentRocket, GitEventRequest request) {
         PositionInfo newPosition;
         switch (request.getAction()) {
             case BRANCH_CREATED:
 //                RocketResponse rocket = new RocketResponse("id", null, null, new PositionResponse(0d, 0d), StatusType.AWAITING_LAUNCH );
                 break;
-            case BRANCH_UPDATED:
-                return new RocketInfo(currentRocket.getId(), currentRocket.getBranchName(), currentRocket.getAuthorAvatars(),
-                        currentRocket.getSecondsRemaining(), new PositionInfo(0d, 0d), StatusType.FLYING);
-            case BRANCH_DELETED:
-                return null;
             case PULL_REQUEST_CREATED:
-                String prId = request.getDetails().getId();
+            case PULL_REQUEST_UPDATED:
                 newPosition = new PositionInfo(randomBetween(0d, 0.1d), randomBetween(0d, 0.1d));
-                return new RocketInfo(prId, currentRocket.getBranchName(), currentRocket.getAuthorAvatars(),
+                return new RocketInfo(currentRocket.getId(), currentRocket.getBranchName(), currentRocket.getAuthorAvatars(),
                         currentRocket.getSecondsRemaining(), newPosition, StatusType.FLYING);
             case PULL_REQUEST_REVIEWED:
-                switch (outcome) {
+                switch (request.getDetails().getOutcome()) {
                     case APPROVE:
                         PositionInfo oldPosition = currentRocket.getPosition();
                         newPosition = new PositionInfo(oldPosition.getDistance() + randomBetween(0.3d, 0.4d), oldPosition.getOrder() + randomBetween(0.3d,

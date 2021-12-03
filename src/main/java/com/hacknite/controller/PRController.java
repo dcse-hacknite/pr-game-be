@@ -35,6 +35,7 @@ public class PRController {
 
     //Endpoint for initial state of the PRs
     @GetMapping("/state")
+    @CrossOrigin(origins = "*")
     public @ResponseBody
     StateResponse state() {
 //        service.deleteAll();
