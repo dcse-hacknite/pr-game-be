@@ -63,7 +63,7 @@ public class StateService {
             if(stateInfo.getRockets() != null && !stateInfo.getRockets().isEmpty()) {
                 currentRocket = stateInfo.getRockets().stream()
                         .filter(rocketInfo -> (rocketInfo.getId() != null && rocketInfo.getId().equals(request.getDetails().getId())) || (request.getDetails().getBranchName() != null && request.getDetails().getBranchName().equals(rocketInfo.getBranchName()))).findFirst().orElse(null);
-                if(currentRocket.getId() == null) {
+                if(currentRocket != null && currentRocket.getId() == null) {
                     currentRocket.setId(request.getDetails().getId());
                 }
             }
