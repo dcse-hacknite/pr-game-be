@@ -73,7 +73,7 @@ public class StateService {
             //Replace rocket
             String currentRocketId = currentRocket.getId();
             List<RocketInfo> newRockets = stateInfo.getRockets().stream().filter(rocketInfo -> !rocketInfo.getId().equals(currentRocketId)
-                    || rocketInfo.getStatus().equals(StatusType.CRASHED))
+                    || !rocketInfo.getStatus().equals(StatusType.CRASHED))
                     .collect(Collectors.toList());
             newRockets.add(rocketNewPosition);
             stateInfo.setRockets(newRockets);
