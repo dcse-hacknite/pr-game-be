@@ -72,7 +72,8 @@ public class StateService {
             }
             //Replace rocket
             String currentRocketId = currentRocket.getId();
-            List<RocketInfo> newRockets = stateInfo.getRockets().stream().filter(rocketInfo -> !rocketInfo.getId().equals(currentRocketId))
+            List<RocketInfo> newRockets = stateInfo.getRockets().stream().filter(rocketInfo -> !rocketInfo.getId().equals(currentRocketId)
+                    || rocketInfo.getStatus().equals(StatusType.CRASHED))
                     .collect(Collectors.toList());
             newRockets.add(rocketNewPosition);
             stateInfo.setRockets(newRockets);
@@ -134,7 +135,7 @@ public class StateService {
             case PULL_REQUEST_DELETED:
                 newPosition = new PositionInfo(randomBetween(0d, 0d), currentRocket.getPosition().getOrder());
                 return new RocketInfo(currentRocket.getId(), currentRocket.getBranchName(), currentRocket.getAuthorAvatars(),
-                        currentRocket.getSecondsRemaining(), newPosition, StatusType.AWAITING_LAUNCH);
+                        currentRocket.getSecondsRemaining(), newPosition, StatusType.CRASHED);
         }
         return currentRocket;
     }
