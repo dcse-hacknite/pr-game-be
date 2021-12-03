@@ -19,6 +19,7 @@ import org.springframework.test.context.event.annotation.BeforeTestClass;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.mockito.Mockito.*;
 
@@ -59,6 +60,7 @@ public class StateServiceTest {
 
     @Test
     public void testRandom() {
+        double randomm = ThreadLocalRandom.current().nextDouble(0, 0.1);
         Double random = service.randomBetween(0.112D, 0.583D);
     }
 }

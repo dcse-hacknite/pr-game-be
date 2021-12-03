@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Component
@@ -130,11 +131,11 @@ public class StateService {
                                 currentRocket.getSecondsRemaining(), currentRocket.getPosition(), StatusType.MUTINY);
                 }
             case PULL_REQUEST_MERGED:
-                newPosition = new PositionInfo(randomBetween(1d, 1d), currentRocket.getPosition().getOrder());
+                newPosition = new PositionInfo(1D, currentRocket.getPosition().getOrder());
                 return new RocketInfo(currentRocket.getId(), currentRocket.getBranchName(), currentRocket.getAuthorAvatars(),
                         currentRocket.getSecondsRemaining(), newPosition, StatusType.LANDED);
             case PULL_REQUEST_DELETED:
-                newPosition = new PositionInfo(randomBetween(0d, 0d), currentRocket.getPosition().getOrder());
+                newPosition = new PositionInfo(currentRocket.getPosition().getDistance(), currentRocket.getPosition().getOrder());
                 return new RocketInfo(currentRocket.getId(), currentRocket.getBranchName(), currentRocket.getAuthorAvatars(),
                         currentRocket.getSecondsRemaining(), newPosition, StatusType.CRASHED);
         }
@@ -156,8 +157,7 @@ public class StateService {
     }
 
     public Double randomBetween(double min, double max) {
-        Random r = new Random();
-        return (r.nextInt((int) ((max - min) * 10 + 1)) + min * 10) / 10.0;
+        return ThreadLocalRandom.current().nextDouble(min, max);
     }
 
     public StateResponse getCurrentState() {
